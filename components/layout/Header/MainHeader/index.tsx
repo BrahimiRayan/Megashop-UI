@@ -4,6 +4,7 @@ const MainHeader = () => {
   return (
     <header className="sticky top-0 bg-white z-20">
       <NavBar />
+      
     </header>
   );
 };
