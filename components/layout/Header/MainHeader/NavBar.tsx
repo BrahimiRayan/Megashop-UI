@@ -23,11 +23,11 @@ import getAuth from "@/lib/auth/getAuth";
 import { NavMenu } from "@/lib/types/navbar.types";
 
 const data: NavMenu = [
-  {
+  {   // it only will be showen to the seller 
     id: 1,
     type: "MenuItem",
     label: "Boutique",
-    url: "/catalog?type=boutique",
+    url: "/seller/boutique",
     children: [],
   },
   {
@@ -40,7 +40,7 @@ const data: NavMenu = [
 ];
 
 const NavBar = async () => {
-  const session = await getAuth();
+  // const session = await getAuth();
 
   return (
     <nav className="flex relative max-w-frame mx-auto items-center justify-between py-2 px-4 xl:px-0">
@@ -117,7 +117,7 @@ const NavBar = async () => {
         </Link>
 
         <CartBtn />
-        {session && <NotificationBtn />}
+        {/* {session && <NotificationBtn />} */}
         <UserMenu />
       </div>
     </nav>

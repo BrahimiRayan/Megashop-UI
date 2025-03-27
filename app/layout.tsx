@@ -8,6 +8,8 @@ import { satoshi } from "@/styles/fonts";
 // components
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "@/app/providers";
+import Link from "next/link";
+
 
 export const viewport: Viewport = {
   themeColor: "#000000",
@@ -27,6 +29,8 @@ export default function GlobalLayout({
     <html lang="en">
       <body className={satoshi.className}>
         <HolyLoader color="#868686" />
+        <Link href='/'> Home</Link>
+        
         <Providers>
           {children}
           <Toaster />
