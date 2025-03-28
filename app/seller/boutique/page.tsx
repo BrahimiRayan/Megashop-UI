@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Store, Plus, Edit, Trash2 } from "lucide-react";
 
 interface Product {
   id: number;
@@ -56,124 +55,139 @@ export default function ShopPage() {
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct) {
-      // Mise à jour du produit existant
       setProducts(products.map(product =>
         product.id === editingProduct.id ? { ...newProduct, id: editingProduct.id } : product
       ));
       setEditingProduct(null);
     } else {
-      // Ajout d'un nouveau produit
       setProducts([...products, { ...newProduct, id: products.length + 1 }]);
     }
     setNewProduct({ name: "", description: "", quantity: 0, category: "", condition: "", price: 0, image: "" });
     setIsFormOpen(false);
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setNewProduct({ ...newProduct, image: imageUrl });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4 md:px-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">Ma Boutique</h1>
-
-        {/* Grille des produits */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="group relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
-            >
-              <div className="relative h-64">
-                <img 
-                  className="h-full border mx-auto"
-                  src={product.image} alt="" 
-                />
-                {/* Boutons d'action au survol */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-                  <button
-                    onClick={() => handleEditProduct(product)}
-                    className="bg-white text-black px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-200 transition-colors"
-                  >
-                    <Edit className="h-4 w-4" /> Modifier
-                  </button>
-                 
-                  <button
-                    onClick={() => handleDeleteProduct(product.id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-red-600 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" /> Supprimer
-                  </button>
-                </div>
-              </div>
-              <div className="p-4">
-                <h2 className="text-lg font-semibold">{product.name}</h2>
-                <p className="text-sm text-gray-600">{product.description}</p>
-                <p className="text-sm mt-2">Quantité : {product.quantity}</p>
-                <p className="text-sm">Catégorie : {product.category}</p>
-                <p className="text-sm">État : {product.condition}</p>
-                <p className="text-lg font-bold mt-2">${product.price.toFixed(2)}</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Titre avec icône à gauche et bouton à droite */}
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <Store className="h-8 w-8 text-black" />
+              <h1 className="text-4xl font-extrabold text-gray-900">Ma Boutique</h1>
             </div>
-          ))}
-        </div>
-
-        {/* Bouton Ajouter un produit */}
-        <div className="mt-8 flex justify-center">
+            <p className="mt-2 text-gray-600 text-lg">
+              Vous trouverez ici vos produits ajoutés et pourrez les gérer facilement.
+            </p>
+          </div>
           <button
             onClick={() => {
               setEditingProduct(null);
               setNewProduct({ name: "", description: "", quantity: 0, category: "", condition: "", price: 0, image: "" });
               setIsFormOpen(true);
             }}
-            className="bg-black text-white px-6 py-3 rounded-full flex items-center gap-2 hover:bg-gray-800 transition-colors"
+            className="bg-black text-white px-6 py-2 rounded-full flex items-center gap-2 text-base font-semibold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             <Plus className="h-5 w-5" /> Ajouter un produit
           </button>
         </div>
 
-        {/* Formulaire d'ajout/modification de produit */}
+        {/* Grille des produits */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="group relative bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            >
+              <div className="relative h-48 w-full">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-full mx-auto"
+                />
+                {/* Boutons au survol */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/60 to-transparent">
+                  <button
+                    onClick={() => handleEditProduct(product)}
+                    className="bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-800 transition-all duration-200 shadow-md"
+                  >
+                    <Edit className="h-4 w-4" /> Modifier
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className="bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-800 transition-all duration-200 shadow-md"
+                  >
+                    <Trash2 className="h-4 w-4" /> Supprimer
+                  </button>
+                </div>
+              </div>
+              <div className="p-4">
+                <h2 className="text-lg font-semibold text-gray-800 truncate">{product.name}</h2>
+                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-gray-600"><span className="font-bold">Quantité :</span> {product.quantity}</p>
+                  <p className="text-sm text-gray-600"><span className="font-bold">Catégorie :</span> {product.category}</p>
+                  <p className="text-sm text-gray-600"><span className="font-bold">État :</span> {product.condition}</p>
+                </div>
+                <p className="text-xl font-bold text-gray-900 mt-3">${product.price.toFixed(2)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Formulaire d'ajout/modification */}
         {isFormOpen && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl h-[90%] overflow-y-scroll">
-              <h2 className="text-2xl font-bold mb-4">
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fade-in">
+            <div className="bg-white p-8 rounded-2xl w-full max-w-lg shadow-2xl transform transition-all duration-300 scale-100 max-h-[90vh] overflow-y-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
                 {editingProduct ? "Modifier le produit" : "Ajouter un produit"}
               </h2>
-              <form onSubmit={handleAddProduct} className="space-y-4">
+              <form onSubmit={handleAddProduct} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium">Nom du produit</label>
+                  <label className="block text-sm font-medium text-gray-700">Nom du produit</label>
                   <input
                     type="text"
                     value={newProduct.name}
                     onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">Description</label>
+                  <label className="block text-sm font-medium text-gray-700">Description</label>
                   <textarea
                     value={newProduct.description}
                     onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-md"
-                    rows={3}
+                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
+                    rows={4}
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">Quantité</label>
+                  <label className="block text-sm font-medium text-gray-700">Quantité</label>
                   <input
                     type="number"
                     value={newProduct.quantity}
                     onChange={(e) => setNewProduct({ ...newProduct, quantity: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
                     min="0"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">Catégorie</label>
+                  <label className="block text-sm font-medium text-gray-700">Catégorie</label>
                   <select
                     value={newProduct.category}
                     onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
                     required
                   >
                     <option value="">Sélectionner une catégorie</option>
@@ -184,11 +198,11 @@ export default function ShopPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">État</label>
+                  <label className="block text-sm font-medium text-gray-700">État</label>
                   <select
                     value={newProduct.condition}
                     onChange={(e) => setNewProduct({ ...newProduct, condition: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
                     required
                   >
                     <option value="">Sélectionner un état</option>
@@ -198,39 +212,41 @@ export default function ShopPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">Prix ($)</label>
+                  <label className="block text-sm font-medium text-gray-700">Prix ($)</label>
                   <input
                     type="number"
                     value={newProduct.price}
                     onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
                     min="0"
                     step="0.01"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium">Image (URL)</label>
+                  <label className="block text-sm font-medium text-gray-700">Image</label>
                   <input
-                    type="text"
-                    value={newProduct.image}
-                    onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-md"
-                    placeholder="ex: /image.jpg"
-                    required
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
+                    required={!editingProduct} // Non requis si modification
                   />
+                  {newProduct.image && (
+                    <img src={newProduct.image} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded-md" />
+                  )}
                 </div>
                 <div className="flex gap-4">
                   <button
                     type="submit"
-                    className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+                    className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg"
                   >
                     {editingProduct ? "Mettre à jour" : "Ajouter"}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsFormOpen(false)}
-                    className="bg-gray-200 text-black px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+                    className="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-300 shadow-md"
                   >
                     Annuler
                   </button>
